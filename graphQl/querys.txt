@@ -1,0 +1,42 @@
+
+query counts {
+  bookCount
+ 	authorCount
+}
+
+
+query books {
+  allBooks { 
+    title 
+    author
+    published 
+    genres
+  }
+}
+
+query authors{
+  allAuthors { 
+  	name
+    bookCount
+  }
+}
+
+mutation newBook {
+  addBook(
+    title: "Pimeyden tango",
+    author: "Reijo Mäki",
+    published: 1997,
+    genres: ["crime"]
+  ) {
+    title,
+    author
+  }
+}
+
+
+mutation editBornYear {
+  editAuthor(name: "Reijo Mäki", setBornTo: 1958) {
+    name
+    born
+  }
+}
