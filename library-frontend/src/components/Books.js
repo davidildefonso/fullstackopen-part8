@@ -1,22 +1,22 @@
 import React, {useState} from 'react'
-import {  useQuery  } from '@apollo/client'
+import { /*  useQuery */  } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
 import GenresList from './GenresList'
 
 
-const Books = (props) => {
-	const result = useQuery(ALL_BOOKS )
+const Books = ({show, books, loading}) => {
+	//const result = useQuery(ALL_BOOKS )
 	const [booksFiltered, setBooksFiltered] = useState(null)
 
-	if (props.show && result.loading) {
+	if (show && loading) {
 		return <div>loading...</div>
 	}
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
-  const books =  result.data.allBooks 
+  //const books =  result.data.allBooks 
 
   const genres = books.reduce( (filteredGenres, book) => {
 	book.genres.forEach(element => {

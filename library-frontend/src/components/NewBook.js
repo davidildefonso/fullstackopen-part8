@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useMutation   } from '@apollo/client'
-import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS, FIND_BOOKS_BY_GENRE } from '../queries'
+import { useQuery, useMutation, useSubscription, useApolloClient   } from '@apollo/client'
+import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS, FIND_BOOKS_BY_GENRE , BOOK_ADDED} from '../queries'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -14,17 +14,10 @@ const NewBook = (props) => {
 			console.log(error)
 		},		
 		update: (store, response) => {
-			const dataInStore = store.readQuery({ query: ALL_BOOKS })
-			store.writeQuery({
-				query: ALL_BOOKS,
-				data: {
-					...dataInStore,
-					allBooks: [ ...dataInStore.allBooks, response.data.addBook ]
-				}
-			})
+		
+			props.updateCacheWith(response.data.addBook)
 
-			const dataInStoreAuthors = store.readQuery({ query: ALL_AUTHORS })
-			
+			const dataInStoreAuthors = store.readQuery({ query: ALL_AUTHORS })			
 			store.writeQuery({
 				query: ALL_AUTHORS,
 				data: {
@@ -37,23 +30,61 @@ const NewBook = (props) => {
 				}
 			})
 
-			// const dataInStoreFilter = store.readQuery({ 
-			// 	query: FIND_BOOKS_BY_GENRE, 
-			// 	variables: { genre: response.data.addBook.genres[0] } 
-			// })			
-			// store.writeQuery({
-			// 	query: FIND_BOOKS_BY_GENRE,
-			// 	data:  {
-			// 		...dataInStore,
-			// 		booksByGenre: [ ...dataInStoreFilter.booksByGenre, response.data.addBook ]
-			// 	}
-			// })
+		}		
+		// update: (store, response) => {
+		// 	const dataInStore = store.readQuery({ query: ALL_BOOKS })
+		// 	store.writeQuery({
+		// 		query: ALL_BOOKS,
+		// 		data: {
+		// 			...dataInStore,
+		// 			allBooks: [ ...dataInStore.allBooks, response.data.addBook ]
+		// 		}
+		// 	})
+
+		// 	const dataInStoreAuthors = store.readQuery({ query: ALL_AUTHORS })
+			
+		// 	store.writeQuery({
+		// 		query: ALL_AUTHORS,
+		// 		data: {
+		// 			...dataInStoreAuthors.allAuthors,
+		// 			allAuthors: dataInStoreAuthors.allAuthors.map(author => 
+		// 				author._id === response.data._id 
+		// 					? {...author, bookCount: author.bookCount + 1 } 
+		// 					: author
+		// 			) 
+		// 		}
+		// 	})
+
+		// 	// const dataInStoreFilter = store.readQuery({ 
+		// 	// 	query: FIND_BOOKS_BY_GENRE, 
+		// 	// 	variables: { genre: response.data.addBook.genres[0] } 
+		// 	// })			
+		// 	// store.writeQuery({
+		// 	// 	query: FIND_BOOKS_BY_GENRE,
+		// 	// 	data:  {
+		// 	// 		...dataInStore,
+		// 	// 		booksByGenre: [ ...dataInStoreFilter.booksByGenre, response.data.addBook ]
+		// 	// 	}
+		// 	// })
 
 
 		
 			
+		// }
+	})
+
+
+	
+	useSubscription(BOOK_ADDED, {
+		onSubscriptionData: ({ subscriptionData }) => {
+			  console.log(subscriptionData)
+			// const addedBook = subscriptionData.data.bookAdded
+			// notify(`${addedBook.name} added`)
+			// updateCacheWith(addedBook)
 		}
 	})
+
+
 
   if (!props.show) {
     return null

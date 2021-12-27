@@ -15,6 +15,7 @@ mutation createBook($title: String!, $author: String!, $published: Int!, $genres
 			},
 			published,
 			genres
+			id
 		}
 
 }
@@ -22,22 +23,10 @@ mutation createBook($title: String!, $author: String!, $published: Int!, $genres
 
 `
 
-export const ALL_BOOKS = gql`
-	query books {
-		allBooks { 
-			title 
-			author{
-				name
-				bookCount				
-			}
-			published 		
-			genres	
-		}
-	}
-`
+
 
 export const ALL_AUTHORS = gql`
-	query books {
+	query authors {
 		allAuthors { 
 			name
 			born
@@ -119,7 +108,42 @@ export const FIND_BOOKS_BY_GENRE = gql`
 			}
 			published 		
 			genres	
+			id
 		}
 	}
 
+`
+
+export const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title 
+	author{
+		name
+		bookCount				
+	}
+	published 		
+	genres	
+	id
+  }
+`
+
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  
+${BOOK_DETAILS}
+`
+
+export const ALL_BOOKS = gql`
+	query books {
+		allBooks { 
+		   ...BookDetails	
+		}
+	}
+
+	${BOOK_DETAILS}
 `
